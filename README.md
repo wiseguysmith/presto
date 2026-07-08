@@ -10,3 +10,7 @@ Open `index.html` directly in a browser. No package install is required.
 - Mock restaurant: Solana Bistro
 - Architecture: static HTML/CSS/JavaScript, organized so the mock data can later move into Next.js, Supabase, Drizzle, and realtime APIs.
 - Generated visual asset: `assets/presto-hero.png`
+
+## Developer Handoff
+
+See `docs/HANDOFF.md` for the next development phases, technical migration notes, open product questions, and MVP definition of done.
