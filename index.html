@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PRESTO | Restaurant Operating System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="rail" aria-label="PRESTO navigation">
+        <a class="brand" href="#guest" aria-label="PRESTO home">
+          <span class="brand-mark">P</span>
+          <span>
+            <strong>PRESTO</strong>
+            <small>Restaurant OS</small>
+          </span>
+        </a>
+        <nav class="rail-nav" aria-label="Prototype sections">
+          <a href="#guest" class="active" data-route="guest">Guest</a>
+          <a href="#orders" data-route="orders">Orders</a>
+          <a href="#kitchen" data-route="kitchen">Kitchen</a>
+          <a href="#menu" data-route="menu">Menu</a>
+          <a href="#tables" data-route="tables">Tables</a>
+          <a href="#reviews" data-route="reviews">Reviews</a>
+          <a href="#analytics" data-route="analytics">Analytics</a>
+        </nav>
+        <div class="rail-card">
+          <span class="pulse"></span>
+          <div>
+            <strong>Live service</strong>
+            <small id="serviceClock">Table 12 active</small>
+          </div>
+        </div>
+      </aside>
+
+      <main>
+        <section class="view guest-view active" id="guest" data-view="guest">
+          <div class="hero">
+            <img src="assets/presto-hero.png" alt="PRESTO QR ordering on a restaurant table" />
+            <div class="hero-copy">
+              <p class="eyebrow">Table 12 · Solana Bistro</p>
+              <h1>PRESTO</h1>
+              <p>QR ordering that feels effortless for guests and operationally sharp for the team behind the pass.</p>
+              <div class="hero-actions">
+                <button class="primary-btn" data-scroll-menu>Start order</button>
+                <button class="ghost-btn" data-demo-submit>Run demo order</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="guest-layout">
+            <section class="menu-panel" aria-labelledby="menuTitle">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Guest menu</p>
+                  <h2 id="menuTitle">Today at Solana</h2>
+                </div>
+                <label class="search">
+                  <span>Search</span>
+                  <input id="menuSearch" type="search" placeholder="pasta, salmon, dessert" />
+                </label>
+              </div>
+              <div class="category-tabs" id="categoryTabs" role="tablist"></div>
+              <div class="menu-grid" id="menuGrid"></div>
+            </section>
+
+            <aside class="cart-panel" aria-label="Current order">
+              <div class="cart-top">
+                <div>
+                  <p class="eyebrow">Table 12</p>
+                  <h2>Your order</h2>
+                </div>
+                <span class="status-chip" id="cartCount">0 items</span>
+              </div>
+              <div id="cartItems" class="cart-items empty-state">Add a dish to begin.</div>
+              <label class="field">
+                <span>Allergies or notes</span>
+                <textarea id="orderNotes" rows="3" placeholder="No cilantro, gluten allergy, birthday surprise..."></textarea>
+              </label>
+              <div class="totals">
+                <span>Subtotal</span><strong id="subtotal">$0.00</strong>
+                <span>Tax</span><strong id="tax">$0.00</strong>
+                <span>Total</span><strong id="total">$0.00</strong>
+              </div>
+              <button class="primary-btn wide" id="submitOrder">Submit order</button>
+              <div class="order-status" id="orderStatus" hidden>
+                <div class="status-line">
+                  <span>Order #1087</span>
+                  <strong id="statusLabel">New</strong>
+                </div>
+                <div class="progress-steps" id="progressSteps"></div>
+                <button class="ghost-btn wide" id="rateMeal">Rate experience</button>
+              </div>
+              <div class="rating-box" id="ratingBox" hidden>
+                <p class="eyebrow">Post-meal pulse</p>
+                <h3>How was your experience?</h3>
+                <div class="stars" id="stars" aria-label="Rate your experience"></div>
+                <p id="ratingMessage"></p>
+                <button class="primary-btn wide" id="reviewAction" hidden>Leave Google Review</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="orders" data-view="orders">
+          <header class="workspace-head">
+            <div>
+              <p class="eyebrow">Staff dashboard</p>
+              <h1>Orders command center</h1>
+            </div>
+            <div class="metric-strip">
+              <span><strong>18</strong> open</span>
+              <span><strong>7m</strong> avg fire time</span>
+              <span><strong>96%</strong> on-time</span>
+            </div>
+          </header>
+          <div class="kanban" id="kanban"></div>
+        </section>
+
+        <section class="view" id="kitchen" data-view="kitchen">
+          <header class="workspace-head">
+            <div>
+              <p class="eyebrow">Kitchen display</p>
+              <h1>Readable at rush speed</h1>
+            </div>
+            <button class="primary-btn" id="advanceKitchen">Advance next order</button>
+          </header>
+          <div class="kitchen-grid" id="kitchenGrid"></div>
+        </section>
+
+        <section class="view" id="menu" data-view="menu">
+          <header class="workspace-head">
+            <div>
+              <p class="eyebrow">Manager tools</p>
+              <h1>Menu management</h1>
+            </div>
+            <button class="primary-btn" id="toggleSoldOut">Toggle salmon availability</button>
+          </header>
+          <div class="manager-grid" id="menuManager"></div>
+        </section>
+
+        <section class="view" id="tables" data-view="tables">
+          <header class="workspace-head">
+            <div>
+              <p class="eyebrow">QR workflow</p>
+              <h1>Tables and live QR codes</h1>
+            </div>
+            <button class="ghost-btn" id="regenQr">Regenerate QR set</button>
+          </header>
+          <div class="table-grid" id="tableGrid"></div>
+        </section>
+
+        <section class="view" id="reviews" data-view="reviews">
+          <header class="workspace-head">
+            <div>
+              <p class="eyebrow">Customer engagement</p>
+              <h1>Reviews and recovery</h1>
+            </div>
+          </header>
+          <div class="insight-grid">
+            <article class="insight-card"><span>Average rating</span><strong>4.7</strong><small>Last 30 days</small></article>
+            <article class="insight-card"><span>Google conversion</span><strong>42%</strong><small>From happy guests</small></article>
+            <article class="insight-card"><span>Private recoveries</span><strong>9</strong><small>Before public review</small></article>
+            <article class="insight-card"><span>Total feedback</span><strong>186</strong><small>+18% this week</small></article>
+          </div>
+          <div class="feedback-list" id="feedbackList"></div>
+        </section>
+
+        <section class="view" id="analytics" data-view="analytics">
+          <header class="workspace-head">
+            <div>
+              <p class="eyebrow">Performance</p>
+              <h1>Restaurant intelligence</h1>
+            </div>
+          </header>
+          <div class="insight-grid analytics">
+            <article class="insight-card"><span>Orders today</span><strong>143</strong><small>+12% vs last Wednesday</small></article>
+            <article class="insight-card"><span>Revenue today</span><strong>$5,842</strong><small>Dinner pacing high</small></article>
+            <article class="insight-card"><span>Average ticket</span><strong>$40.85</strong><small>Upsell attach 31%</small></article>
+            <article class="insight-card"><span>Satisfaction</span><strong>94%</strong><small>Based on table pulses</small></article>
+          </div>
+          <div class="analytics-board">
+            <section class="chart-panel">
+              <h2>Peak ordering times</h2>
+              <div class="bar-chart" id="barChart"></div>
+            </section>
+            <section class="chart-panel">
+              <h2>Top sellers</h2>
+              <div id="topSellers"></div>
+            </section>
+            <section class="chart-panel wide-panel">
+              <h2>AI operations brief</h2>
+              <p id="aiBrief">Prep two extra salmon portions before 7:15 PM, promote burrata to tables seated after 8 PM, and watch Table 9 because their order has a shellfish allergy note.</p>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
