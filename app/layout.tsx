@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'PRESTO - QR Ordering',
-  description: 'Restaurant QR code ordering system',
+  title: 'Pink Flamingo Table Ordering | PRESTO',
+  description: 'Controlled QR ordering demo for Pink Flamingo in Tamarindo.',
 }
 
 export default function RootLayout({
