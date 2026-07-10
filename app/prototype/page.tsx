@@ -5,7 +5,7 @@ export default function PrototypeReference() {
     <main className="min-h-screen bg-gray-950 px-6 py-12 text-white">
       <div className="mx-auto max-w-4xl">
         <Link href="/" className="text-sm font-bold uppercase text-pink-300">
-          Back to PRESTO
+          Back to Pink Flamingo ordering
         </Link>
         <h1 className="mt-8 text-5xl font-black">Original Prototype Reference</h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-gray-300">

@@ -66,7 +66,7 @@ export function OrderConfirmation({
       </button>
 
       <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-stone-400">
-        Pink Flamingo x PRESTO
+        Powered by Mindful Tech
       </p>
     </div>
   )

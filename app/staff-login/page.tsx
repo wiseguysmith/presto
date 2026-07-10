@@ -21,7 +21,7 @@ export default async function StaffLoginPage({ searchParams }: StaffLoginPagePro
               <LockKeyhole size={22} />
             </div>
             <div>
-              <p className="text-xs font-black uppercase text-pink-200">PRESTO staff</p>
+              <p className="text-xs font-black uppercase text-pink-200">Pink Flamingo staff</p>
               <h1 className="text-2xl font-black">Enter staff PIN</h1>
             </div>
           </div>

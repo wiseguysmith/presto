@@ -4,6 +4,7 @@ import {
   ChefHat,
   Clock3,
   ConciergeBell,
+  LockKeyhole,
   MapPin,
   QrCode,
   ShieldCheck,
@@ -46,15 +47,24 @@ export default function Home() {
         <div className="mx-auto flex min-h-[86svh] max-w-6xl flex-col justify-between px-5 py-5 sm:px-6 lg:px-8">
           <nav className="flex items-center justify-between gap-4">
             <Link href="/" className="text-lg font-black uppercase tracking-[0.18em] text-white">
-              PRESTO
+              Powered by Mindful Tech
             </Link>
-            <Link
-              href="/menu/pink-flamingo/table/1"
-              className="inline-flex h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-black text-stone-950 transition hover:bg-pink-100"
-            >
-              <QrCode size={18} />
-              Table 1
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/staff-login"
+                className="inline-flex h-11 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 text-sm font-black text-white backdrop-blur transition hover:bg-white/18"
+              >
+                <LockKeyhole size={17} />
+                Staff Login
+              </Link>
+              <Link
+                href="/menu/pink-flamingo/table/1"
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-black text-stone-950 transition hover:bg-pink-100"
+              >
+                <QrCode size={18} />
+                Table 1
+              </Link>
+            </div>
           </nav>
 
           <div className="grid gap-10 pb-10 pt-14 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
@@ -73,7 +83,7 @@ export default function Home() {
                 </span>
               </div>
 
-              <p className="mb-3 text-sm font-black uppercase text-pink-200">Pink Flamingo x PRESTO</p>
+              <p className="mb-3 text-sm font-black uppercase text-pink-200">Pink Flamingo x Mindful Tech</p>
               <h1 className="max-w-3xl text-5xl font-black leading-[0.95] tracking-normal text-white sm:text-6xl lg:text-7xl">
                 Pink Flamingo table ordering
               </h1>

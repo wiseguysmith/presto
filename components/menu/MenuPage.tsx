@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   GuestSource,
@@ -202,16 +203,24 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
     <div className="min-h-screen bg-[#fbf7f1] pb-28 text-stone-950">
       <div className="sticky top-0 z-30 border-b border-stone-200 bg-[#fbf7f1]/90 backdrop-blur-md">
         <div className="mx-auto max-w-3xl">
-          <div className="flex items-center justify-between px-5 pb-1 pt-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-3 px-5 pb-1 pt-4 sm:px-6 lg:px-8">
             <div>
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-pink-600">
                 {restaurant.location || 'Dine-in'} - QR ordering
               </p>
               <h1 className="text-2xl font-black leading-tight">{restaurant.name}</h1>
             </div>
-            <span className="shrink-0 whitespace-nowrap rounded-full border-2 border-stone-950 px-4 py-2 text-sm font-black">
-              Table {table.table_number}
-            </span>
+            <div className="flex shrink-0 items-center gap-2">
+              <Link
+                href="/staff-login"
+                className="hidden h-10 items-center rounded-full border border-stone-200 bg-white px-3 text-xs font-black text-stone-600 shadow-sm transition hover:border-pink-200 hover:text-pink-700 sm:inline-flex"
+              >
+                Staff
+              </Link>
+              <span className="whitespace-nowrap rounded-full border-2 border-stone-950 px-4 py-2 text-sm font-black">
+                Table {table.table_number}
+              </span>
+            </div>
           </div>
 
           <CategoryTabs
@@ -257,7 +266,7 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
         )}
 
         <p className="pb-10 pt-12 text-center text-xs font-bold uppercase tracking-[0.18em] text-stone-400">
-          Powered by PRESTO
+          Powered by Mindful Tech
         </p>
       </main>
 

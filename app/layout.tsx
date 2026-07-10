@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Pink Flamingo Table Ordering | PRESTO',
-  description: 'Controlled QR ordering demo for Pink Flamingo in Tamarindo.',
+  title: 'Pink Flamingo Table Ordering | Mindful Tech',
+  description: 'Controlled QR ordering demo for Pink Flamingo by Mindful Tech.',
 }
 
 export default function RootLayout({

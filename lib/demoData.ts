@@ -4,7 +4,7 @@ export const demoRestaurant: Restaurant = {
   id: 'demo-restaurant-pink-flamingo',
   name: 'Pink Flamingo',
   slug: 'pink-flamingo',
-  description: 'Beachside Costa Rican dining powered by PRESTO.',
+  description: 'Beachside Costa Rican dining powered by Mindful Tech.',
   location: 'Tamarindo, Costa Rica',
   currency: 'USD',
   is_active: true,
