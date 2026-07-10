@@ -51,6 +51,31 @@ export interface CartItem {
   item_notes?: string
 }
 
+export type PaymentMethod = 'card' | 'counter'
+
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded' | 'cancelled'
+
+export type OrderStatus =
+  | 'pending_payment'
+  | 'paid'
+  | 'sent_to_kitchen'
+  | 'preparing'
+  | 'ready'
+  | 'served'
+  | 'cancelled'
+  | 'refunded'
+
+export type GuestSource =
+  | 'instagram'
+  | 'google'
+  | 'walk_by'
+  | 'hotel'
+  | 'friend'
+  | 'local_resident'
+  | 'tourist'
+  | 'tiktok'
+  | 'other'
+
 export interface Order {
   id: string
   restaurant_id: string
@@ -58,10 +83,22 @@ export interface Order {
   table_number: number
   customer_name?: string
   customer_whatsapp?: string
-  status: 'new' | 'accepted' | 'preparing' | 'ready' | 'served' | 'cancelled'
+  customer_email?: string
+  status: OrderStatus
+  payment_method: PaymentMethod
+  payment_status: PaymentStatus
   subtotal: number
+  tip_amount: number
+  tax_amount: number
+  platform_fee_amount: number
   total: number
   order_notes?: string
+  guest_source?: GuestSource
+  stripe_checkout_session_id?: string
+  stripe_payment_intent_id?: string
+  stripe_connected_account_id?: string
+  kitchen_sent_at?: string
+  paid_at?: string
   created_at: string
   updated_at: string
 }
@@ -75,5 +112,19 @@ export interface OrderItem {
   quantity: number
   item_notes?: string
   line_total: number
+  created_at: string
+}
+
+export interface KitchenOrder extends Order {
+  order_items: OrderItem[]
+}
+
+export interface OrderFeedback {
+  id: string
+  order_id: string
+  restaurant_id: string
+  rating: number
+  feedback_text?: string
+  wants_follow_up: boolean
   created_at: string
 }

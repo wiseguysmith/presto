@@ -1,20 +1,34 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { MenuItem, MenuCategory, Restaurant, RestaurantTable } from '@/types'
-import { CategoryTabs } from './CategoryTabs'
-import { MenuItemCard } from './MenuItemCard'
-import { ItemSheet } from './ItemSheet'
+import {
+  GuestSource,
+  MenuCategory,
+  MenuItem,
+  PaymentMethod,
+  Restaurant,
+  RestaurantTable,
+} from '@/types'
+import { createOrder } from '@/lib/orders/createOrder'
 import { CartBar } from './CartBar'
 import { CartDrawer, CartLine } from './CartDrawer'
+import { CategoryTabs } from './CategoryTabs'
+import { ItemSheet } from './ItemSheet'
+import { MenuItemCard } from './MenuItemCard'
 import { OrderConfirmation } from './OrderConfirmation'
-import { createOrder } from '@/lib/orders/createOrder'
 
 interface MenuPageProps {
   restaurant: Restaurant
   table: RestaurantTable
   categories: MenuCategory[]
   items: MenuItem[]
+}
+
+type SubmittedOrder = {
+  orderId: string
+  paymentMethod: PaymentMethod
+  status: 'pending_payment' | 'sent_to_kitchen'
+  total: number
 }
 
 const lineKeyFor = (menuItemId: string, notes: string) => `${menuItemId}::${notes}`
@@ -26,16 +40,20 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [orderNotes, setOrderNotes] = useState('')
   const [customerName, setCustomerName] = useState('')
+  const [customerEmail, setCustomerEmail] = useState('')
   const [customerWhatsApp, setCustomerWhatsApp] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
+  const [tipPercent, setTipPercent] = useState(15)
+  const [guestSource, setGuestSource] = useState<GuestSource | ''>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const [orderId, setOrderId] = useState<string | null>(null)
+  const [submittedOrder, setSubmittedOrder] = useState<SubmittedOrder | null>(null)
 
   const sectionsRef = useRef<HTMLDivElement>(null)
   const suppressSpyUntil = useRef(0)
 
   const categorySlugById = useMemo(
-    () => Object.fromEntries(categories.map((c) => [c.id, c.slug])),
+    () => Object.fromEntries(categories.map((category) => [category.id, category.slug])),
     [categories]
   )
 
@@ -58,8 +76,9 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
 
   const itemCount = lines.reduce((sum, line) => sum + line.quantity, 0)
   const subtotal = lines.reduce((sum, line) => sum + line.price * line.quantity, 0)
+  const tipAmount = subtotal * (tipPercent / 100)
+  const total = subtotal + tipAmount
 
-  // Scroll-spy: highlight the category currently in view
   useEffect(() => {
     const sections = sectionsRef.current?.querySelectorAll('[data-section]')
     if (!sections || sections.length === 0) return
@@ -96,6 +115,7 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
           line.lineKey === key ? { ...line, quantity: line.quantity + quantity } : line
         )
       }
+
       return [
         ...current,
         {
@@ -118,12 +138,14 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
         if (next.length === 0) setDrawerOpen(false)
         return next
       }
+
       return current.map((line) => (line.lineKey === lineKey ? { ...line, quantity } : line))
     })
   }
 
   const handleSubmitOrder = async () => {
     if (lines.length === 0) return
+
     setIsSubmitting(true)
     setSubmitError(null)
 
@@ -133,15 +155,26 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
         tableId: table.id,
         tableNumber: table.table_number,
         customerName: customerName.trim() || undefined,
+        customerEmail,
         customerWhatsApp: customerWhatsApp.trim() || undefined,
         orderNotes: orderNotes.trim() || undefined,
+        paymentMethod,
+        tipPercent,
+        guestSource: guestSource || undefined,
         cartItems: lines.map(({ lineKey, ...cartItem }) => cartItem),
       })
 
       if ('error' in result) {
         setSubmitError(result.error)
+      } else if (result.checkoutUrl) {
+        window.location.href = result.checkoutUrl
       } else {
-        setOrderId(result.orderId)
+        setSubmittedOrder({
+          orderId: result.orderId,
+          paymentMethod: result.paymentMethod,
+          status: result.status,
+          total: result.total,
+        })
         setDrawerOpen(false)
       }
     } catch {
@@ -152,29 +185,29 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
   }
 
   const handleNewOrder = () => {
-    setOrderId(null)
+    setSubmittedOrder(null)
     setLines([])
     setOrderNotes('')
+    setCustomerName('')
+    setCustomerEmail('')
+    setCustomerWhatsApp('')
+    setPaymentMethod('card')
+    setTipPercent(15)
+    setGuestSource('')
     setSubmitError(null)
     window.scrollTo({ top: 0 })
   }
 
   return (
     <div className="min-h-screen bg-[#fbf7f1] pb-28 text-stone-950">
-      {/* Sticky header + category nav */}
       <div className="sticky top-0 z-30 border-b border-stone-200 bg-[#fbf7f1]/90 backdrop-blur-md">
         <div className="mx-auto max-w-3xl">
           <div className="flex items-center justify-between px-5 pb-1 pt-4 sm:px-6 lg:px-8">
             <div>
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-pink-600">
-                {restaurant.location || 'Dine-in'} · QR ordering
+                {restaurant.location || 'Dine-in'} - QR ordering
               </p>
-              <h1 className="text-2xl font-black leading-tight">
-                <span className="mr-1.5" aria-hidden>
-                  🦩
-                </span>
-                {restaurant.name}
-              </h1>
+              <h1 className="text-2xl font-black leading-tight">{restaurant.name}</h1>
             </div>
             <span className="shrink-0 whitespace-nowrap rounded-full border-2 border-stone-950 px-4 py-2 text-sm font-black">
               Table {table.table_number}
@@ -189,7 +222,6 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
         </div>
       </div>
 
-      {/* Menu sections */}
       <main ref={sectionsRef} className="mx-auto max-w-3xl px-5 sm:px-6 lg:px-8">
         {categories.map((category) => {
           const categoryItems = itemsByCategory.get(category.id)
@@ -220,7 +252,7 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
 
         {items.length === 0 && (
           <p className="py-16 text-center font-bold text-stone-400">
-            The menu is being updated — please ask our staff.
+            The menu is being updated. Please ask our staff.
           </p>
         )}
 
@@ -229,12 +261,10 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
         </p>
       </main>
 
-      {/* Floating cart bar */}
-      {itemCount > 0 && !drawerOpen && !selectedItem && !orderId && (
-        <CartBar itemCount={itemCount} total={subtotal} onOpen={() => setDrawerOpen(true)} />
+      {itemCount > 0 && !drawerOpen && !selectedItem && !submittedOrder && (
+        <CartBar itemCount={itemCount} total={total} onOpen={() => setDrawerOpen(true)} />
       )}
 
-      {/* Item detail sheet */}
       {selectedItem && (
         <ItemSheet
           item={selectedItem}
@@ -244,30 +274,39 @@ export function MenuPage({ restaurant, table, categories, items }: MenuPageProps
         />
       )}
 
-      {/* Cart drawer */}
       {drawerOpen && (
         <CartDrawer
           lines={lines}
           tableNumber={table.table_number}
           orderNotes={orderNotes}
           customerName={customerName}
+          customerEmail={customerEmail}
           customerWhatsApp={customerWhatsApp}
+          paymentMethod={paymentMethod}
+          tipPercent={tipPercent}
+          guestSource={guestSource}
           isSubmitting={isSubmitting}
           error={submitError}
           onChangeQuantity={handleChangeQuantity}
           onChangeOrderNotes={setOrderNotes}
           onChangeCustomerName={setCustomerName}
+          onChangeCustomerEmail={setCustomerEmail}
           onChangeWhatsApp={setCustomerWhatsApp}
+          onChangePaymentMethod={setPaymentMethod}
+          onChangeTipPercent={setTipPercent}
+          onChangeGuestSource={setGuestSource}
           onSubmit={handleSubmitOrder}
           onClose={() => setDrawerOpen(false)}
         />
       )}
 
-      {/* Confirmation takeover */}
-      {orderId && (
+      {submittedOrder && (
         <OrderConfirmation
-          orderId={orderId}
+          orderId={submittedOrder.orderId}
           tableNumber={table.table_number}
+          paymentMethod={submittedOrder.paymentMethod}
+          status={submittedOrder.status}
+          total={submittedOrder.total}
           onNewOrder={handleNewOrder}
         />
       )}

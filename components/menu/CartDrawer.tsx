@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect } from 'react'
-import { CartItem } from '@/types'
-import { Minus, Plus, Send, X } from 'lucide-react'
+import { Banknote, CreditCard, Minus, Plus, Send, X } from 'lucide-react'
+import { CartItem, GuestSource, PaymentMethod } from '@/types'
 
 export interface CartLine extends CartItem {
   lineKey: string
@@ -13,33 +13,63 @@ interface CartDrawerProps {
   tableNumber: number
   orderNotes: string
   customerName: string
+  customerEmail: string
   customerWhatsApp: string
+  paymentMethod: PaymentMethod
+  tipPercent: number
+  guestSource: GuestSource | ''
   isSubmitting: boolean
   error: string | null
   onChangeQuantity: (lineKey: string, quantity: number) => void
   onChangeOrderNotes: (value: string) => void
   onChangeCustomerName: (value: string) => void
+  onChangeCustomerEmail: (value: string) => void
   onChangeWhatsApp: (value: string) => void
+  onChangePaymentMethod: (value: PaymentMethod) => void
+  onChangeTipPercent: (value: number) => void
+  onChangeGuestSource: (value: GuestSource | '') => void
   onSubmit: () => void
   onClose: () => void
 }
+
+const guestSourceOptions: { value: GuestSource; label: string }[] = [
+  { value: 'instagram', label: 'Instagram' },
+  { value: 'google', label: 'Google' },
+  { value: 'walk_by', label: 'Walk-by' },
+  { value: 'hotel', label: 'Hotel' },
+  { value: 'friend', label: 'Friend' },
+  { value: 'local_resident', label: 'Local resident' },
+  { value: 'tourist', label: 'Tourist' },
+  { value: 'tiktok', label: 'TikTok' },
+  { value: 'other', label: 'Other' },
+]
 
 export function CartDrawer({
   lines,
   tableNumber,
   orderNotes,
   customerName,
+  customerEmail,
   customerWhatsApp,
+  paymentMethod,
+  tipPercent,
+  guestSource,
   isSubmitting,
   error,
   onChangeQuantity,
   onChangeOrderNotes,
   onChangeCustomerName,
+  onChangeCustomerEmail,
   onChangeWhatsApp,
+  onChangePaymentMethod,
+  onChangeTipPercent,
+  onChangeGuestSource,
   onSubmit,
   onClose,
 }: CartDrawerProps) {
   const subtotal = lines.reduce((sum, line) => sum + line.price * line.quantity, 0)
+  const tipAmount = subtotal * (tipPercent / 100)
+  const total = subtotal + tipAmount
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -57,7 +87,6 @@ export function CartDrawer({
       />
 
       <div className="animate-sheet-up relative flex max-h-[92svh] w-full max-w-lg flex-col overflow-hidden rounded-t-[28px] bg-white shadow-2xl sm:max-h-[85vh] sm:rounded-[28px]">
-        {/* Header */}
         <div className="flex items-center justify-between border-b border-stone-100 px-6 py-4">
           <div>
             <p className="text-xs font-black uppercase tracking-wide text-pink-600">
@@ -74,16 +103,14 @@ export function CartDrawer({
           </button>
         </div>
 
-        {/* Scrollable body */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
-          {/* Lines */}
           <ul className="space-y-4">
             {lines.map((line) => (
               <li key={line.lineKey} className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <p className="font-black leading-snug text-stone-950">{line.name}</p>
                   {line.item_notes && (
-                    <p className="mt-0.5 text-sm italic text-stone-500">“{line.item_notes}”</p>
+                    <p className="mt-0.5 text-sm italic text-stone-500">{line.item_notes}</p>
                   )}
                   <p className="mt-0.5 text-sm font-bold text-stone-400">
                     ${(line.price * line.quantity).toFixed(2)}
@@ -110,45 +137,137 @@ export function CartDrawer({
             ))}
           </ul>
 
-          {/* Order notes */}
-          <label className="mt-6 block">
-            <span className="text-xs font-black uppercase tracking-wide text-stone-400">
-              Notes for the kitchen
-            </span>
-            <textarea
-              value={orderNotes}
-              onChange={(e) => onChangeOrderNotes(e.target.value)}
-              placeholder="Allergies, timing, anything else…"
-              rows={2}
-              className="mt-2 w-full resize-none rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 placeholder:text-stone-400 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
-            />
-          </label>
+          <div className="mt-6 space-y-4 border-t border-stone-100 pt-5">
+            <div>
+              <p className="text-xs font-black uppercase tracking-wide text-stone-400">Tip</p>
+              <div className="mt-2 grid grid-cols-4 gap-2">
+                {[0, 10, 15, 20].map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => onChangeTipPercent(option)}
+                    className={`min-h-11 rounded-full border text-sm font-black transition ${
+                      tipPercent === option
+                        ? 'border-pink-500 bg-pink-500 text-white'
+                        : 'border-stone-200 bg-stone-50 text-stone-700 hover:border-pink-200 hover:bg-pink-50'
+                    }`}
+                  >
+                    {option === 0 ? 'No tip' : `${option}%`}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-          {/* Guest info */}
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <p className="text-xs font-black uppercase tracking-wide text-stone-400">Payment</p>
+              <div className="mt-2 grid grid-cols-1 gap-2">
+                <button
+                  type="button"
+                  onClick={() => onChangePaymentMethod('card')}
+                  className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
+                    paymentMethod === 'card'
+                      ? 'border-pink-500 bg-pink-50 text-stone-950'
+                      : 'border-stone-200 bg-stone-50 text-stone-700 hover:border-pink-200 hover:bg-pink-50'
+                  }`}
+                >
+                  <CreditCard size={20} className="shrink-0 text-pink-600" />
+                  <span>
+                    <span className="block font-black">Pay by card</span>
+                    <span className="text-xs font-bold text-stone-500">
+                      Opens secure Stripe checkout.
+                    </span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onChangePaymentMethod('counter')}
+                  className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
+                    paymentMethod === 'counter'
+                      ? 'border-pink-500 bg-pink-50 text-stone-950'
+                      : 'border-stone-200 bg-stone-50 text-stone-700 hover:border-pink-200 hover:bg-pink-50'
+                  }`}
+                >
+                  <Banknote size={20} className="shrink-0 text-pink-600" />
+                  <span>
+                    <span className="block font-black">Pay at counter/table</span>
+                    <span className="text-xs font-bold text-stone-500">
+                      Staff confirms payment before kitchen receives it.
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </div>
+
             <label className="block">
               <span className="text-xs font-black uppercase tracking-wide text-stone-400">
-                Name <span className="font-bold normal-case text-stone-300">(optional)</span>
+                Notes for the kitchen
+              </span>
+              <textarea
+                value={orderNotes}
+                onChange={(event) => onChangeOrderNotes(event.target.value)}
+                placeholder="Allergies, timing, anything else..."
+                rows={2}
+                className="mt-2 w-full resize-none rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 placeholder:text-stone-400 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
+              />
+            </label>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label className="block">
+                <span className="text-xs font-black uppercase tracking-wide text-stone-400">
+                  Name <span className="font-bold normal-case text-stone-300">(optional)</span>
+                </span>
+                <input
+                  type="text"
+                  value={customerName}
+                  onChange={(event) => onChangeCustomerName(event.target.value)}
+                  placeholder="Your name"
+                  className="mt-2 w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 placeholder:text-stone-400 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
+                />
+              </label>
+              <label className="block">
+                <span className="text-xs font-black uppercase tracking-wide text-stone-400">
+                  WhatsApp <span className="font-bold normal-case text-stone-300">(optional)</span>
+                </span>
+                <input
+                  type="tel"
+                  value={customerWhatsApp}
+                  onChange={(event) => onChangeWhatsApp(event.target.value)}
+                  placeholder="+506 8888 8888"
+                  className="mt-2 w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 placeholder:text-stone-400 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
+                />
+              </label>
+            </div>
+
+            <label className="block">
+              <span className="text-xs font-black uppercase tracking-wide text-stone-400">
+                Email for receipt
               </span>
               <input
-                type="text"
-                value={customerName}
-                onChange={(e) => onChangeCustomerName(e.target.value)}
-                placeholder="Your name"
+                type="email"
+                required
+                value={customerEmail}
+                onChange={(event) => onChangeCustomerEmail(event.target.value)}
+                placeholder="you@example.com"
                 className="mt-2 w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 placeholder:text-stone-400 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
               />
             </label>
+
             <label className="block">
               <span className="text-xs font-black uppercase tracking-wide text-stone-400">
-                WhatsApp <span className="font-bold normal-case text-stone-300">(optional)</span>
+                How did you hear about us?
               </span>
-              <input
-                type="tel"
-                value={customerWhatsApp}
-                onChange={(e) => onChangeWhatsApp(e.target.value)}
-                placeholder="+506 8888 8888"
-                className="mt-2 w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 placeholder:text-stone-400 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
-              />
+              <select
+                value={guestSource}
+                onChange={(event) => onChangeGuestSource(event.target.value as GuestSource | '')}
+                className="mt-2 w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
+              >
+                <option value="">Choose one</option>
+                {guestSourceOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
 
@@ -159,11 +278,20 @@ export function CartDrawer({
           )}
         </div>
 
-        {/* Footer */}
         <div className="border-t border-stone-100 px-6 py-4">
-          <div className="mb-3 flex items-center justify-between text-stone-950">
-            <span className="font-bold text-stone-500">Total</span>
-            <span className="text-2xl font-black">${subtotal.toFixed(2)}</span>
+          <div className="mb-3 space-y-1 text-stone-950">
+            <div className="flex items-center justify-between text-sm font-bold text-stone-500">
+              <span>Subtotal</span>
+              <span>${subtotal.toFixed(2)}</span>
+            </div>
+            <div className="flex items-center justify-between text-sm font-bold text-stone-500">
+              <span>Tip</span>
+              <span>${tipAmount.toFixed(2)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-stone-500">Total</span>
+              <span className="text-2xl font-black">${total.toFixed(2)}</span>
+            </div>
           </div>
           <button
             onClick={onSubmit}
@@ -173,17 +301,19 @@ export function CartDrawer({
             {isSubmitting ? (
               <>
                 <span className="h-5 w-5 animate-spin rounded-full border-[3px] border-white/40 border-t-white" />
-                Sending to kitchen…
+                Sending order...
               </>
             ) : (
               <>
                 <Send size={18} />
-                Send order to the kitchen
+                {paymentMethod === 'card' ? 'Continue to payment' : 'Submit for staff payment'}
               </>
             )}
           </button>
           <p className="mt-2 text-center text-xs font-bold text-stone-400">
-            Pay at the table when you’re done — no card needed now.
+            {paymentMethod === 'card'
+              ? 'You will pay securely before the kitchen receives the order.'
+              : 'Staff will confirm payment and send your order to the kitchen.'}
           </p>
           <div className="h-[env(safe-area-inset-bottom)] sm:hidden" />
         </div>
