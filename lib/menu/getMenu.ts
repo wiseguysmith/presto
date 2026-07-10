@@ -1,9 +1,21 @@
 'use server'
 
 import { getSupabaseClient } from '@/lib/supabase/client'
+import {
+  demoCategories,
+  demoMenuItems,
+  demoRestaurant,
+  demoTables,
+  isDemoMode,
+  isDemoRestaurantId,
+} from '@/lib/demoData'
 import { Restaurant, MenuCategory, MenuItem, RestaurantTable } from '@/types'
 
 export async function getRestaurantBySlug(slug: string): Promise<Restaurant | null> {
+  if (isDemoMode()) {
+    return slug === demoRestaurant.slug ? demoRestaurant : null
+  }
+
   try {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -15,13 +27,13 @@ export async function getRestaurantBySlug(slug: string): Promise<Restaurant | nu
 
     if (error) {
       console.error('Error fetching restaurant:', error)
-      return null
+      return slug === demoRestaurant.slug ? demoRestaurant : null
     }
 
     return data
   } catch (error) {
     console.error('Error:', error)
-    return null
+    return slug === demoRestaurant.slug ? demoRestaurant : null
   }
 }
 
@@ -29,6 +41,10 @@ export async function getTableByNumber(
   restaurantId: string,
   tableNumber: number
 ): Promise<RestaurantTable | null> {
+  if (isDemoMode() || isDemoRestaurantId(restaurantId)) {
+    return demoTables.find((table) => table.restaurant_id === restaurantId && table.table_number === tableNumber) || null
+  }
+
   try {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -52,6 +68,10 @@ export async function getTableByNumber(
 }
 
 export async function getMenuCategories(restaurantId: string): Promise<MenuCategory[]> {
+  if (isDemoMode() || isDemoRestaurantId(restaurantId)) {
+    return demoCategories.filter((category) => category.restaurant_id === restaurantId)
+  }
+
   try {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -74,6 +94,10 @@ export async function getMenuCategories(restaurantId: string): Promise<MenuCateg
 }
 
 export async function getMenuItems(restaurantId: string): Promise<MenuItem[]> {
+  if (isDemoMode() || isDemoRestaurantId(restaurantId)) {
+    return demoMenuItems.filter((item) => item.restaurant_id === restaurantId && item.available)
+  }
+
   try {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -99,6 +123,12 @@ export async function getMenuItemsByCategory(
   restaurantId: string,
   categoryId: string
 ): Promise<MenuItem[]> {
+  if (isDemoMode() || isDemoRestaurantId(restaurantId)) {
+    return demoMenuItems.filter(
+      (item) => item.restaurant_id === restaurantId && item.category_id === categoryId && item.available
+    )
+  }
+
   try {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase

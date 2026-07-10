@@ -1,6 +1,7 @@
 'use server'
 
 import { getSupabaseClient } from '@/lib/supabase/client'
+import { isDemoMode, isDemoRestaurantId } from '@/lib/demoData'
 import { CartItem } from '@/types'
 
 export interface CreateOrderInput {
@@ -32,6 +33,10 @@ export async function createOrder(input: CreateOrderInput): Promise<{ orderId: s
   // Calculate subtotal
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const total = subtotal // No tax in Phase 1
+
+  if (isDemoMode() || isDemoRestaurantId(restaurantId)) {
+    return { orderId: `DEMO-${Date.now().toString().slice(-6)}` }
+  }
 
   try {
     const supabase = getSupabaseClient()
