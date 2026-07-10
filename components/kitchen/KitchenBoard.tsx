@@ -10,11 +10,34 @@ interface KitchenBoardProps {
 }
 
 const columns: { status: OrderStatus; label: string; actionLabel?: string; nextStatus?: OrderStatus }[] = [
-  { status: 'sent_to_kitchen', label: 'New', actionLabel: 'Start', nextStatus: 'preparing' },
-  { status: 'preparing', label: 'Preparing', actionLabel: 'Ready', nextStatus: 'ready' },
-  { status: 'ready', label: 'Ready', actionLabel: 'Served', nextStatus: 'served' },
-  { status: 'served', label: 'Served' },
+  { status: 'sent_to_kitchen', label: 'New tickets', actionLabel: 'Start cooking', nextStatus: 'preparing' },
+  { status: 'preparing', label: 'On the line', actionLabel: 'Mark ready', nextStatus: 'ready' },
+  { status: 'ready', label: 'Ready for pickup', actionLabel: 'Mark served', nextStatus: 'served' },
+  { status: 'served', label: 'Served', actionLabel: undefined },
 ]
+
+const columnStyles: Record<string, { header: string; count: string; empty: string }> = {
+  sent_to_kitchen: {
+    header: 'text-[#ffd6a5]',
+    count: 'bg-[#f06a5f] text-white',
+    empty: 'Waiting for the next table order.',
+  },
+  preparing: {
+    header: 'text-[#9bd5b6]',
+    count: 'bg-[#177079] text-white',
+    empty: 'Nothing cooking right now.',
+  },
+  ready: {
+    header: 'text-[#bde9e2]',
+    count: 'bg-[#c4e0d8] text-[#173f45]',
+    empty: 'The pass is clear.',
+  },
+  served: {
+    header: 'text-white/65',
+    count: 'bg-white/10 text-white/70',
+    empty: 'Completed tickets land here.',
+  },
+}
 
 function formatTime(value: string) {
   return new Intl.DateTimeFormat('en-US', {
@@ -53,6 +76,8 @@ export function KitchenBoard({ initialOrders }: KitchenBoardProps) {
     }, {})
   }, [orders])
 
+  const activeOrders = orders.filter((order) => order.status !== 'served').length
+
   const refreshOrders = useCallback(async () => {
     setIsRefreshing(true)
     try {
@@ -84,10 +109,19 @@ export function KitchenBoard({ initialOrders }: KitchenBoardProps) {
 
   return (
     <div>
-      <div className="mb-5 flex flex-col justify-between gap-3 md:flex-row md:items-center">
+      <div className="mb-6 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
         <div>
-          <p className="text-sm font-black uppercase text-pink-300">Live kitchen</p>
-          <h1 className="text-4xl font-black text-white">Pink Flamingo Orders</h1>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-sm font-black uppercase tracking-[0.16em] text-[#ffd6a5]">Live kitchen</p>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#9bd5b6]/25 bg-[#9bd5b6]/10 px-3 py-1 text-xs font-black text-[#9bd5b6]">
+              <span className="h-2 w-2 rounded-full bg-[#9bd5b6]" />
+              Updating every 8 seconds
+            </span>
+          </div>
+          <h1 className="mt-2 text-4xl font-black sm:text-5xl">Kitchen board</h1>
+          <p className="mt-3 text-base leading-7 text-white/60">
+            {activeOrders} active {activeOrders === 1 ? 'ticket' : 'tickets'} across the line.
+          </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           <button
@@ -96,107 +130,118 @@ export function KitchenBoard({ initialOrders }: KitchenBoardProps) {
               setSoundEnabled(true)
               playNewOrderTone()
             }}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-pink-500 px-4 font-black text-white transition hover:bg-pink-400"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#f06a5f] px-4 font-black text-white transition hover:bg-[#f58270]"
           >
             <Bell size={18} />
-            {soundEnabled ? 'Sound On' : 'Enable Sound'}
+            {soundEnabled ? 'Sound on' : 'Enable ticket sound'}
           </button>
           <button
             type="button"
             onClick={refreshOrders}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-white px-4 font-black text-gray-950 transition hover:bg-pink-100"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 font-black text-white transition hover:bg-white/15"
           >
             <RefreshCw className={isRefreshing ? 'animate-spin' : ''} size={18} />
-            Refresh
+            Refresh board
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-4">
-        {columns.map((column) => (
-          <section key={column.status} className="min-h-[24rem] rounded-2xl border border-white/10 bg-white/8 p-3">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-black text-white">{column.label}</h2>
-              <span className="rounded-full bg-white/10 px-3 py-1 text-sm font-black text-pink-100">
-                {groupedOrders[column.status]?.length || 0}
-              </span>
-            </div>
+        {columns.map((column) => {
+          const style = columnStyles[column.status]
+          const columnOrders = groupedOrders[column.status] || []
 
-            <div className="space-y-3">
-              {(groupedOrders[column.status] || []).map((order) => (
-                <article key={order.id} className="rounded-2xl bg-white p-4 text-gray-950 shadow-xl shadow-black/10">
-                  <div className="mb-3 flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-xs font-black uppercase text-pink-600">Table {order.table_number}</p>
-                      <h3 className="text-xl font-black">Order {order.id.slice(0, 8)}</h3>
+          return (
+            <section key={column.status} className="min-h-[26rem] border border-white/10 bg-white/[0.06] p-3">
+              <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/10 px-1 pb-3">
+                <h2 className={'text-lg font-black ' + style.header}>{column.label}</h2>
+                <span className={'rounded-full px-3 py-1 text-sm font-black ' + style.count}>
+                  {columnOrders.length}
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {columnOrders.map((order) => (
+                  <article key={order.id} className="border border-[#e8d7bd] bg-[#fff8eb] p-4 text-[#173f45] shadow-lg shadow-black/10">
+                    <div className="mb-3 flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-[0.14em] text-[#e35c52]">Table {order.table_number}</p>
+                        <h3 className="mt-1 text-xl font-black">Order {order.id.slice(0, 8)}</h3>
+                      </div>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-[#f8f0df] px-2 py-1 text-xs font-bold text-[#557176]">
+                        <Clock3 size={14} />
+                        {formatTime(order.created_at)}
+                      </span>
                     </div>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 text-xs font-bold text-gray-600">
-                      <Clock3 size={14} />
-                      {formatTime(order.created_at)}
-                    </span>
-                  </div>
 
-                  <div className="space-y-2">
-                    {order.order_items.map((item) => (
-                      <div key={item.id} className="rounded-xl bg-gray-50 p-3">
-                        <div className="flex justify-between gap-3">
-                          <p className="font-black">{item.quantity}x {item.name_snapshot}</p>
-                          <p className="font-bold">${item.line_total.toFixed(2)}</p>
+                    <div className="space-y-2">
+                      {order.order_items.map((item) => (
+                        <div key={item.id} className="border border-[#e8d7bd] bg-[#f8f0df] p-3">
+                          <div className="flex justify-between gap-3">
+                            <p className="font-black">{item.quantity}x {item.name_snapshot}</p>
+                            <p className="font-bold">{'$'}{item.line_total.toFixed(2)}</p>
+                          </div>
+                          {item.item_notes && (
+                            <p className="mt-2 border-l-2 border-[#f06a5f] pl-2 text-sm font-bold text-[#b94745]">
+                              {item.item_notes}
+                            </p>
+                          )}
                         </div>
-                        {item.item_notes && <p className="mt-1 text-sm text-pink-700">{item.item_notes}</p>}
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
 
-                  {order.order_notes && (
-                    <p className="mt-3 rounded-xl border border-pink-100 bg-pink-50 p-3 text-sm font-medium text-pink-800">
-                      {order.order_notes}
-                    </p>
-                  )}
-
-                  <div className="mt-4 flex items-center justify-between gap-3 border-t border-gray-100 pt-3">
-                    <p className="text-sm font-bold text-gray-500">{order.payment_method === 'card' ? 'Card paid' : 'Counter paid'}</p>
-                    <p className="text-lg font-black">${order.total.toFixed(2)}</p>
-                  </div>
-
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    {column.nextStatus && (
-                      <button
-                        type="button"
-                        onClick={() => moveOrder(order.id, column.nextStatus as OrderStatus)}
-                        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-gray-950 px-3 text-sm font-black text-white transition hover:bg-pink-600"
-                      >
-                        <ChefHat size={16} />
-                        {column.actionLabel}
-                      </button>
+                    {order.order_notes && (
+                      <p className="mt-3 border border-[#f2c9b6] bg-[#ffe0d0] p-3 text-sm font-bold text-[#8e5d5d]">
+                        Guest note: {order.order_notes}
+                      </p>
                     )}
-                    {order.status !== 'served' && (
-                      <button
-                        type="button"
-                        onClick={() => moveOrder(order.id, 'cancelled')}
-                        className="inline-flex min-h-11 items-center justify-center rounded-xl border border-red-100 bg-red-50 px-3 text-sm font-black text-red-700 transition hover:bg-red-100"
-                      >
-                        Cancel
-                      </button>
-                    )}
-                    {order.status === 'served' && (
-                      <div className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-50 px-3 text-sm font-black text-emerald-700">
-                        <CheckCircle2 size={16} />
-                        Completed
-                      </div>
-                    )}
-                  </div>
-                </article>
-              ))}
 
-              {(groupedOrders[column.status] || []).length === 0 && (
-                <p className="rounded-2xl border border-dashed border-white/15 py-10 text-center text-sm font-bold text-white/45">
-                  No orders
-                </p>
-              )}
-            </div>
-          </section>
-        ))}
+                    <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#e8d7bd] pt-3">
+                      <p className="text-sm font-bold text-[#557176]">
+                        {order.payment_method === 'card' ? 'Card paid' : 'Counter paid'}
+                      </p>
+                      <p className="text-lg font-black">{'$'}{order.total.toFixed(2)}</p>
+                    </div>
+
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      {column.nextStatus && (
+                        <button
+                          type="button"
+                          onClick={() => moveOrder(order.id, column.nextStatus as OrderStatus)}
+                          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#177079] px-3 text-sm font-black text-white transition hover:bg-[#0f5f66]"
+                        >
+                          <ChefHat size={16} />
+                          {column.actionLabel}
+                        </button>
+                      )}
+                      {order.status !== 'served' && (
+                        <button
+                          type="button"
+                          onClick={() => moveOrder(order.id, 'cancelled')}
+                          className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#f2c9b6] bg-[#fff1eb] px-3 text-sm font-black text-[#b94745] transition hover:bg-[#ffe0d0]"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                      {order.status === 'served' && (
+                        <div className="col-span-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#d9eee7] px-3 text-sm font-black text-[#177079]">
+                          <CheckCircle2 size={16} />
+                          Completed
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                ))}
+
+                {columnOrders.length === 0 && (
+                  <p className="border border-dashed border-white/15 px-4 py-10 text-center text-sm font-bold text-white/45">
+                    {style.empty}
+                  </p>
+                )}
+              </div>
+            </section>
+          )
+        })}
       </div>
     </div>
   )
