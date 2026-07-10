@@ -1,6 +1,5 @@
-// Visual identity for dishes while Phase 1 runs without food photography.
-// Keyword-matched emoji + category-tinted gradient tiles keep the menu
-// looking designed instead of empty.
+// Visual identity for dishes while the menu is not yet using food photography.
+// Keyword-matched emoji and category-tinted tiles keep the menu warm and lively.
 
 const EMOJI_RULES: Array<[RegExp, string]> = [
   [/guac|avocado/i, '🥑'],
@@ -32,22 +31,22 @@ const CATEGORY_EMOJI: Record<string, string> = {
 }
 
 const CATEGORY_TILE: Record<string, string> = {
-  starters: 'from-amber-100 to-orange-200',
-  bowls: 'from-lime-100 to-emerald-200',
-  tacos: 'from-orange-100 to-red-200',
-  seafood: 'from-sky-100 to-cyan-200',
-  smoothies: 'from-fuchsia-100 to-purple-200',
-  coffee: 'from-orange-100 to-amber-300',
+  starters: 'from-[#ffe1ae] to-[#f7b782]',
+  bowls: 'from-[#d8efc7] to-[#a9d7bb]',
+  tacos: 'from-[#ffd4aa] to-[#f58d79]',
+  seafood: 'from-[#cbeee9] to-[#9bcfd0]',
+  smoothies: 'from-[#f7c8d6] to-[#f5a8a4]',
+  coffee: 'from-[#efd6b5] to-[#d7a675]',
 }
 
-const DEFAULT_TILE = 'from-pink-100 to-rose-200'
+const DEFAULT_TILE = 'from-[#ffe0d0] to-[#f4a9a5]'
 
 export function emojiForItem(itemName: string, categorySlug?: string): string {
   for (const [pattern, emoji] of EMOJI_RULES) {
     if (pattern.test(itemName)) return emoji
   }
   if (categorySlug && CATEGORY_EMOJI[categorySlug]) return CATEGORY_EMOJI[categorySlug]
-  return '🦩'
+  return '🌴'
 }
 
 export function tileForCategory(categorySlug?: string): string {

@@ -86,18 +86,18 @@ export function CartDrawer({
         className="animate-fade-in absolute inset-0 bg-stone-950/50 backdrop-blur-[2px]"
       />
 
-      <div className="animate-sheet-up relative flex max-h-[92svh] w-full max-w-lg flex-col overflow-hidden rounded-t-[28px] bg-white shadow-2xl sm:max-h-[85vh] sm:rounded-[28px]">
-        <div className="flex items-center justify-between border-b border-stone-100 px-6 py-4">
+      <div className="animate-sheet-up relative flex max-h-[92svh] w-full max-w-lg flex-col overflow-hidden rounded-t-[28px] bg-[#fff8eb] shadow-2xl sm:max-h-[85vh] sm:rounded-[28px]">
+        <div className="flex items-center justify-between border-b border-[#e8d7bd] px-6 py-4">
           <div>
-            <p className="text-xs font-black uppercase tracking-wide text-pink-600">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#e35c52]">
               Table {tableNumber}
             </p>
-            <h2 className="text-xl font-black text-stone-950">Your order</h2>
+            <h2 className="text-xl font-black text-[#173f45]">Your table order</h2>
           </div>
           <button
             onClick={onClose}
             aria-label="Close"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-stone-100 text-stone-950 transition hover:bg-stone-200 active:scale-95"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f8f0df] text-[#173f45] transition hover:bg-[#d9eee7] active:scale-95"
           >
             <X size={20} strokeWidth={2.5} />
           </button>
@@ -112,7 +112,7 @@ export function CartDrawer({
                   {line.item_notes && (
                     <p className="mt-0.5 text-sm italic text-stone-500">{line.item_notes}</p>
                   )}
-                  <p className="mt-0.5 text-sm font-bold text-stone-400">
+                   <p className="mt-0.5 text-sm font-bold text-[#7b9492]">
                     ${(line.price * line.quantity).toFixed(2)}
                   </p>
                 </div>
@@ -137,9 +137,9 @@ export function CartDrawer({
             ))}
           </ul>
 
-          <div className="mt-6 space-y-4 border-t border-stone-100 pt-5">
+                <div className="mt-6 space-y-4 border-t border-[#e8d7bd] pt-5">
             <div>
-              <p className="text-xs font-black uppercase tracking-wide text-stone-400">Tip</p>
+              <p className="text-xs font-black uppercase tracking-wide text-[#7b9492]">Tip</p>
               <div className="mt-2 grid grid-cols-4 gap-2">
                 {[0, 10, 15, 20].map((option) => (
                   <button
@@ -148,8 +148,8 @@ export function CartDrawer({
                     onClick={() => onChangeTipPercent(option)}
                     className={`min-h-11 rounded-full border text-sm font-black transition ${
                       tipPercent === option
-                        ? 'border-pink-500 bg-pink-500 text-white'
-                        : 'border-stone-200 bg-stone-50 text-stone-700 hover:border-pink-200 hover:bg-pink-50'
+                        ? 'border-[#f06a5f] bg-[#f06a5f] text-white'
+                        : 'border-[#d5e4df] bg-[#f8f0df] text-[#557176] hover:border-[#e35c52] hover:bg-[#ffe0d0]'
                     }`}
                   >
                     {option === 0 ? 'No tip' : `${option}%`}
@@ -159,21 +159,21 @@ export function CartDrawer({
             </div>
 
             <div>
-              <p className="text-xs font-black uppercase tracking-wide text-stone-400">Payment</p>
+              <p className="text-xs font-black uppercase tracking-wide text-[#7b9492]">Payment</p>
               <div className="mt-2 grid grid-cols-1 gap-2">
                 <button
                   type="button"
                   onClick={() => onChangePaymentMethod('card')}
                   className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
                     paymentMethod === 'card'
-                      ? 'border-pink-500 bg-pink-50 text-stone-950'
-                      : 'border-stone-200 bg-stone-50 text-stone-700 hover:border-pink-200 hover:bg-pink-50'
+                      ? 'border-[#f06a5f] bg-[#ffe0d0] text-[#173f45]'
+                      : 'border-[#d5e4df] bg-[#f8f0df] text-[#557176] hover:border-[#e35c52] hover:bg-[#ffe0d0]'
                   }`}
                 >
-                  <CreditCard size={20} className="shrink-0 text-pink-600" />
+                  <CreditCard size={20} className="shrink-0 text-[#e35c52]" />
                   <span>
                     <span className="block font-black">Pay by card</span>
-                    <span className="text-xs font-bold text-stone-500">
+                    <span className="text-xs font-bold text-[#557176]">
                       Opens secure Stripe checkout.
                     </span>
                   </span>
@@ -183,14 +183,14 @@ export function CartDrawer({
                   onClick={() => onChangePaymentMethod('counter')}
                   className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
                     paymentMethod === 'counter'
-                      ? 'border-pink-500 bg-pink-50 text-stone-950'
-                      : 'border-stone-200 bg-stone-50 text-stone-700 hover:border-pink-200 hover:bg-pink-50'
+                      ? 'border-[#f06a5f] bg-[#ffe0d0] text-[#173f45]'
+                      : 'border-[#d5e4df] bg-[#f8f0df] text-[#557176] hover:border-[#e35c52] hover:bg-[#ffe0d0]'
                   }`}
                 >
-                  <Banknote size={20} className="shrink-0 text-pink-600" />
+                  <Banknote size={20} className="shrink-0 text-[#e35c52]" />
                   <span>
                     <span className="block font-black">Pay at counter/table</span>
-                    <span className="text-xs font-bold text-stone-500">
+                    <span className="text-xs font-bold text-[#557176]">
                       Staff confirms payment before kitchen receives it.
                     </span>
                   </span>
@@ -199,7 +199,7 @@ export function CartDrawer({
             </div>
 
             <label className="block">
-              <span className="text-xs font-black uppercase tracking-wide text-stone-400">
+              <span className="text-xs font-black uppercase tracking-wide text-[#7b9492]">
                 Notes for the kitchen
               </span>
               <textarea
@@ -207,39 +207,39 @@ export function CartDrawer({
                 onChange={(event) => onChangeOrderNotes(event.target.value)}
                 placeholder="Allergies, timing, anything else..."
                 rows={2}
-                className="mt-2 w-full resize-none rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 placeholder:text-stone-400 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
+                className="mt-2 w-full resize-none rounded-2xl border border-[#d5e4df] bg-[#f8f0df] px-4 py-3 text-[15px] text-[#173f45] placeholder:text-[#7b9492] focus:border-[#e35c52] focus:bg-[#fff8eb] focus:outline-none focus:ring-4 focus:ring-[#f06a5f]/15"
               />
             </label>
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="block">
-                <span className="text-xs font-black uppercase tracking-wide text-stone-400">
-                  Name <span className="font-bold normal-case text-stone-300">(optional)</span>
+                <span className="text-xs font-black uppercase tracking-wide text-[#7b9492]">
+                  Name <span className="font-bold normal-case text-[#a3b6b3]">(optional)</span>
                 </span>
                 <input
                   type="text"
                   value={customerName}
                   onChange={(event) => onChangeCustomerName(event.target.value)}
                   placeholder="Your name"
-                  className="mt-2 w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 placeholder:text-stone-400 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
+                  className="mt-2 w-full rounded-2xl border border-[#d5e4df] bg-[#f8f0df] px-4 py-3 text-[15px] text-[#173f45] placeholder:text-[#7b9492] focus:border-[#e35c52] focus:bg-[#fff8eb] focus:outline-none focus:ring-4 focus:ring-[#f06a5f]/15"
                 />
               </label>
               <label className="block">
-                <span className="text-xs font-black uppercase tracking-wide text-stone-400">
-                  WhatsApp <span className="font-bold normal-case text-stone-300">(optional)</span>
+                <span className="text-xs font-black uppercase tracking-wide text-[#7b9492]">
+                  WhatsApp <span className="font-bold normal-case text-[#a3b6b3]">(optional)</span>
                 </span>
                 <input
                   type="tel"
                   value={customerWhatsApp}
                   onChange={(event) => onChangeWhatsApp(event.target.value)}
                   placeholder="+506 8888 8888"
-                  className="mt-2 w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 placeholder:text-stone-400 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
+                  className="mt-2 w-full rounded-2xl border border-[#d5e4df] bg-[#f8f0df] px-4 py-3 text-[15px] text-[#173f45] placeholder:text-[#7b9492] focus:border-[#e35c52] focus:bg-[#fff8eb] focus:outline-none focus:ring-4 focus:ring-[#f06a5f]/15"
                 />
               </label>
             </div>
 
             <label className="block">
-              <span className="text-xs font-black uppercase tracking-wide text-stone-400">
+              <span className="text-xs font-black uppercase tracking-wide text-[#7b9492]">
                 Email for receipt
               </span>
               <input
@@ -248,18 +248,18 @@ export function CartDrawer({
                 value={customerEmail}
                 onChange={(event) => onChangeCustomerEmail(event.target.value)}
                 placeholder="you@example.com"
-                className="mt-2 w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 placeholder:text-stone-400 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
+                className="mt-2 w-full rounded-2xl border border-[#d5e4df] bg-[#f8f0df] px-4 py-3 text-[15px] text-[#173f45] placeholder:text-[#7b9492] focus:border-[#e35c52] focus:bg-[#fff8eb] focus:outline-none focus:ring-4 focus:ring-[#f06a5f]/15"
               />
             </label>
 
             <label className="block">
-              <span className="text-xs font-black uppercase tracking-wide text-stone-400">
+              <span className="text-xs font-black uppercase tracking-wide text-[#7b9492]">
                 How did you hear about us?
               </span>
               <select
                 value={guestSource}
                 onChange={(event) => onChangeGuestSource(event.target.value as GuestSource | '')}
-                className="mt-2 w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-[15px] text-stone-950 focus:border-pink-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-100"
+                className="mt-2 w-full rounded-2xl border border-[#d5e4df] bg-[#f8f0df] px-4 py-3 text-[15px] text-[#173f45] focus:border-[#e35c52] focus:bg-[#fff8eb] focus:outline-none focus:ring-4 focus:ring-[#f06a5f]/15"
               >
                 <option value="">Choose one</option>
                 {guestSourceOptions.map((option) => (
@@ -272,31 +272,31 @@ export function CartDrawer({
           </div>
 
           {error && (
-            <p className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
+            <p className="mt-4 rounded-2xl bg-[#ffe3dc] px-4 py-3 text-sm font-bold text-[#b94745]">
               {error}
             </p>
           )}
         </div>
 
-        <div className="border-t border-stone-100 px-6 py-4">
-          <div className="mb-3 space-y-1 text-stone-950">
-            <div className="flex items-center justify-between text-sm font-bold text-stone-500">
+        <div className="border-t border-[#e8d7bd] px-6 py-4">
+          <div className="mb-3 space-y-1 text-[#173f45]">
+            <div className="flex items-center justify-between text-sm font-bold text-[#7b9492]">
               <span>Subtotal</span>
               <span>${subtotal.toFixed(2)}</span>
             </div>
-            <div className="flex items-center justify-between text-sm font-bold text-stone-500">
+            <div className="flex items-center justify-between text-sm font-bold text-[#7b9492]">
               <span>Tip</span>
               <span>${tipAmount.toFixed(2)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="font-bold text-stone-500">Total</span>
+              <span className="font-bold text-[#557176]">Total</span>
               <span className="text-2xl font-black">${total.toFixed(2)}</span>
             </div>
           </div>
           <button
             onClick={onSubmit}
             disabled={isSubmitting || lines.length === 0}
-            className="flex h-[54px] w-full items-center justify-center gap-2 rounded-full bg-pink-500 font-black text-white shadow-xl shadow-pink-500/30 transition hover:bg-pink-400 active:scale-[0.98] disabled:bg-stone-200 disabled:text-stone-400 disabled:shadow-none"
+            className="flex h-[54px] w-full items-center justify-center gap-2 rounded-full bg-[#f06a5f] font-black text-white shadow-xl shadow-[#f06a5f]/30 transition hover:bg-[#f58270] active:scale-[0.98] disabled:bg-[#d5e4df] disabled:text-[#7b9492] disabled:shadow-none"
           >
             {isSubmitting ? (
               <>
@@ -310,7 +310,7 @@ export function CartDrawer({
               </>
             )}
           </button>
-          <p className="mt-2 text-center text-xs font-bold text-stone-400">
+          <p className="mt-2 text-center text-xs font-bold text-[#7b9492]">
             {paymentMethod === 'card'
               ? 'You will pay securely before the kitchen receives the order.'
               : 'Staff will confirm payment and send your order to the kitchen.'}

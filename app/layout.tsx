@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Pink Flamingo Table Ordering | Mindful Tech',
-  description: 'Controlled QR ordering demo for Pink Flamingo by Mindful Tech.',
+  description: 'Tamarindo table ordering for Pink Flamingo, powered by Mindful Tech.',
 }
 
 export default function RootLayout({

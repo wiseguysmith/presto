@@ -13,15 +13,15 @@ export default async function StaffLoginPage({ searchParams }: StaffLoginPagePro
   const next = params.next || '/admin'
 
   return (
-    <main className="min-h-screen bg-gray-950 px-5 py-10 text-white">
+    <main className="min-h-screen bg-[#173f45] px-5 py-10 text-white">
       <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-md items-center">
-        <section className="w-full rounded-3xl border border-white/10 bg-white/8 p-6 shadow-2xl shadow-black/30">
+        <section className="w-full rounded-3xl border border-white/10 bg-[#0b3035]/55 p-6 shadow-2xl shadow-black/30 backdrop-blur-md">
           <div className="mb-6 flex items-center gap-3">
-            <div className="grid h-12 w-12 place-items-center rounded-full bg-pink-500 text-white">
+            <div className="grid h-12 w-12 place-items-center rounded-full bg-[#f06a5f] text-white">
               <LockKeyhole size={22} />
             </div>
             <div>
-              <p className="text-xs font-black uppercase text-pink-200">Pink Flamingo staff</p>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#ffd6a5]">Pink Flamingo staff</p>
               <h1 className="text-2xl font-black">Enter staff PIN</h1>
             </div>
           </div>
@@ -41,10 +41,10 @@ export default async function StaffLoginPage({ searchParams }: StaffLoginPagePro
                 type="password"
                 inputMode="numeric"
                 autoComplete="current-password"
-                className="mt-2 w-full rounded-xl border border-white/10 bg-white px-3 py-4 text-lg font-black text-gray-950 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="mt-2 w-full rounded-xl border border-white/10 bg-[#fff8eb] px-3 py-4 text-lg font-black text-[#173f45] focus:outline-none focus:ring-2 focus:ring-[#f06a5f]"
               />
             </div>
-            <button className="w-full rounded-xl bg-pink-500 px-5 py-4 font-black text-white transition hover:bg-pink-400">
+            <button className="w-full rounded-xl bg-[#f06a5f] px-5 py-4 font-black text-white transition hover:bg-[#f58270]">
               Unlock Staff Tools
             </button>
           </form>

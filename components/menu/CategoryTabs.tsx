@@ -39,8 +39,8 @@ export function CategoryTabs({ categories, activeCategory, onCategorySelect }: C
             onClick={() => onCategorySelect(category.id)}
             className={`shrink-0 rounded-full px-4 py-2 text-sm font-bold transition-all active:scale-95 ${
               isActive
-                ? 'bg-stone-950 text-white shadow-lg shadow-stone-950/20'
-                : 'border border-stone-200 bg-white text-stone-600 hover:border-pink-300 hover:text-stone-950'
+                ? 'bg-[#177079] text-white shadow-lg shadow-[#177079]/20'
+                : 'border border-[#e8d7bd] bg-[#fff8eb] text-[#557176] hover:border-[#e35c52] hover:text-[#173f45]'
             }`}
           >
             {category.name}
